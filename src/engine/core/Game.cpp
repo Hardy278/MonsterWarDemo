@@ -11,9 +11,11 @@
 #include "../component/SpriteComponent.hpp"
 #include "../component/TransformComponent.hpp"
 #include "../scene/SceneManager.hpp"
+#include "../utils/Events.hpp"
 
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
+#include <entt/signal/dispatcher.hpp>
 
 namespace engine::core {
 
@@ -46,7 +48,7 @@ void Game::run() {
     close();
 }
 
-void Game::registerSceneSetup(std::function<void(engine::scene::SceneManager &)> func) {
+void Game::registerSceneSetup(std::function<void(engine::core::Context&)> func) {
     m_sceneSetupFunc = std::move(func);
     spdlog::trace("GAME::registerSceneSetup::已注册场景设置函数。");
 }
@@ -58,6 +60,7 @@ bool Game::init() {
         return false;
     }
 
+    if (!initDispatcher()) return false;
     if (!initConfig()) return false;
     if (!initWindow()) return false;
     if (!initTime()) return false;
@@ -71,7 +74,9 @@ bool Game::init() {
     if (!initContext()) return false;
     if (!initSceneManager()) return false;
 
-    m_sceneSetupFunc(*m_sceneManager);
+    m_sceneSetupFunc(*m_context);
+    // 注册退出事件 (回调函数可以无参数，代表不使用事件结构体中的数据)
+    m_dispatcher->sink<engine::utils::QuitEvent>().connect<&Game::onQuitEvent>(this);
     m_isRunning = true;
     spdlog::trace("GAME::初始化成功。");
     return true;
@@ -88,6 +93,7 @@ void Game::handleEvents() {
 
 void Game::update(float deltaTime) {
     m_sceneManager->update(deltaTime);
+    m_dispatcher->update();
 }
 
 void Game::render() {
@@ -99,6 +105,7 @@ void Game::render() {
 void Game::close()  {
     spdlog::trace("GAME::关闭游戏...");
 
+    m_dispatcher->sink<engine::utils::QuitEvent>().disconnect<&Game::onQuitEvent>(this);
     m_sceneManager->close();
     m_resourceManager.reset();
     
@@ -115,8 +122,20 @@ void Game::close()  {
 }
 /// @}
 
+
 /// @name 游戏组件管理
 /// @{
+bool Game::initDispatcher() {
+    try {
+        m_dispatcher = std::make_unique<entt::dispatcher>();
+    } catch (const std::exception &e) {
+        spdlog::error("GAME::initDispatcher::事件调度器初始化失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("GAME::initDispatcher::事件调度器初始化成功。");
+    return true;
+}
+
 bool Game::initConfig(){
     try {
         m_config = std::make_unique<engine::core::Config>("assets/config.json");
@@ -230,6 +249,7 @@ bool Game::initGameState() {
 bool Game::initContext() {
     try {
         m_context = std::make_unique<engine::core::Context>(
+            *m_dispatcher,
             *m_inputManager,
             *m_renderer, 
             *m_camera, 
@@ -254,5 +274,11 @@ bool Game::initSceneManager() {
     return true;
 }
 /// @}
+
+
+void Game::onQuitEvent() {
+    spdlog::trace("GAME::onQuitEvent::收到退出事件");
+    m_isRunning = false;
+}
 
 } // namespace engine::core

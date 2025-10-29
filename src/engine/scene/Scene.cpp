@@ -4,15 +4,17 @@
 #include "../core/GameState.hpp"
 #include "../render/Camera.hpp"
 #include "../UI/UIManager.hpp"
+#include "../utils/Events.hpp"
 
 #include <spdlog/spdlog.h>
+#include <entt/signal/dispatcher.hpp>
 
 #include <algorithm>
 
 namespace engine::scene {
 
-Scene::Scene(std::string_view name, engine::core::Context &context, engine::scene::SceneManager &sceneManager)
-    : m_sceneName(name), m_context(context), m_sceneManager(sceneManager), m_isInitialized(false), m_UIManager(std::make_unique<engine::ui::UIManager>()) {
+Scene::Scene(std::string_view name, engine::core::Context &context)
+    : m_sceneName(name), m_context(context), m_isInitialized(false), m_UIManager(std::make_unique<engine::ui::UIManager>()) {
     spdlog::trace("SCENE::\"{}\"场景构造完成", m_sceneName);
 }
 
@@ -120,6 +122,18 @@ engine::object::GameObject *Scene::findGameObjectByName(std::string_view name) c
 }
 /// @}
 
+void Scene::requestPopScene() {
+    m_context.getDispatcher().trigger<engine::utils::PopSceneEvent>();
+}
+void Scene::requestPushScene(std::unique_ptr<engine::scene::Scene>&& scene) {
+    m_context.getDispatcher().trigger<engine::utils::PushSceneEvent>(engine::utils::PushSceneEvent{std::move(scene)});
+}
+void Scene::requestReplaceScene(std::unique_ptr<engine::scene::Scene>&& scene) {
+    m_context.getDispatcher().trigger<engine::utils::ReplaceSceneEvent>(engine::utils::ReplaceSceneEvent{std::move(scene)});
+}
+void Scene::quit() {
+    m_context.getDispatcher().trigger<engine::utils::QuitEvent>();
+}
 
 void Scene::processPendingAdditions() {
     for (auto &gemeObject : m_pendingAdditions) {

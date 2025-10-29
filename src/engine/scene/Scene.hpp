@@ -29,7 +29,6 @@ class Scene {
 protected:
     std::string m_sceneName;                            ///< @brief 场景名称
     engine::core::Context& m_context;                    ///< @brief 上下文引用（隐式，构造时传入）
-    engine::scene::SceneManager& m_sceneManager;        ///< @brief 场景管理器引用（构造时传入）
     std::unique_ptr<engine::ui::UIManager> m_UIManager; ///< @brief UI管理器(初始化时自动创建)
     
     bool m_isInitialized = false;                       ///< @brief 场景是否已初始化(非当前场景很可能未被删除，因此需要初始化标志避免重复初始化)
@@ -38,48 +37,41 @@ protected:
 
 public:
     /**
-     * @brief 构造函数。
-     *
-     * @param name 场景的名称。
-     * @param context 场景上下文。
-     * @param scene_manager 场景管理器。
+     * @brief 构造函数
+     * @param name 场景的名称
+     * @param context 场景上下文
      */
-    Scene(std::string_view name, engine::core::Context& context, engine::scene::SceneManager& scene_manager);
+    Scene(std::string_view name, engine::core::Context& context);
 
     // 1. 基类必须声明虚析构函数才能让派生类析构函数被正确调用。
     // 2. 析构函数定义必须写在cpp中，不然需要引入GameObject头文件
     virtual ~Scene();
 
-    // 禁止拷贝和移动构造
     Scene(const Scene&) = delete;
     Scene& operator=(const Scene&) = delete;
     Scene(Scene&&) = delete;
     Scene& operator=(Scene&&) = delete;
 
-    // 核心循环方法
     virtual void init();                        ///< @brief 初始化场景。
     virtual void update(float deltaTime);      ///< @brief 更新场景。
     virtual void render();                      ///< @brief 渲染场景。
     virtual void handleInput();                 ///< @brief 处理输入。
     virtual void clean();                       ///< @brief 清理场景。
 
-    /// @brief 直接向场景中添加一个游戏对象。（初始化时可用，游戏进行中不安全） （&&表示右值引用，与std::move搭配使用，避免拷贝）
     virtual void addGameObject(std::unique_ptr<engine::object::GameObject>&& gameObject);
-
-    /// @brief 安全地添加游戏对象。（添加到m_pendingAdditions中）
-    virtual void safeAddGameObject(std::unique_ptr<engine::object::GameObject>&& gameObject); 
-
-    /// @brief 直接从场景中移除一个游戏对象。（一般不使用，但保留实现的逻辑）
+    virtual void safeAddGameObject(std::unique_ptr<engine::object::GameObject>&& gameObject);
     virtual void removeGameObject(engine::object::GameObject* gameObjectPtr);
-
-    /// @brief 安全地移除游戏对象。（设置need_remove_标记）
     virtual void safeRemoveGameObject(engine::object::GameObject* gameObjectPtr);
 
     /// @brief 获取场景中的游戏对象容器。
     const std::vector<std::unique_ptr<engine::object::GameObject>>& getGameObjects() const { return m_gameObjects; }
-
     /// @brief 根据名称查找游戏对象（返回找到的第一个对象）。
     engine::object::GameObject* findGameObjectByName(std::string_view name) const;
+
+    void requestPopScene();
+    void requestPushScene(std::unique_ptr<engine::scene::Scene>&& scene);
+    void requestReplaceScene(std::unique_ptr<engine::scene::Scene>&& scene);
+    void quit();
 
     // getters and setters
     void setName(std::string_view name) { m_sceneName = name; }               ///< @brief 设置场景名称
@@ -88,7 +80,6 @@ public:
     bool isInitialized() const { return m_isInitialized; }                      ///< @brief 获取场景是否已初始化
 
     engine::core::Context& getContext() const { return m_context; }                  ///< @brief 获取上下文引用
-    engine::scene::SceneManager& getSceneManager() const { return m_sceneManager; } ///< @brief 获取场景管理器引用
     std::vector<std::unique_ptr<engine::object::GameObject>>& getGameObjects() { return m_gameObjects; } ///< @brief 获取场景中的游戏对象
 
 protected:

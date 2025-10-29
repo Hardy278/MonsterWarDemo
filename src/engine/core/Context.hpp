@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include <entt/signal/fwd.hpp>
 
 
 /// @name 前置声明
@@ -39,6 +40,7 @@ namespace engine::core {
  */
 class Context final {
 private:
+    entt::dispatcher& m_dispatcher;                       ///< 事件分发器
     engine::input::InputManager& m_inputManager;          ///< 输入管理器引用
     engine::render::Renderer& m_renderer;                 ///< 渲染器引用
     engine::render::Camera& m_camera;                     ///< 相机引用
@@ -49,6 +51,7 @@ private:
 public:
     /**
      * @brief 构造函数，初始化上下文
+     * @param dispatcher 事件分发器引用
      * @param inputManager 输入管理器引用
      * @param renderer 渲染器引用
      * @param camera 相机引用
@@ -57,6 +60,7 @@ public:
      * @param gameState 游戏状态引用
      */
     Context(
+        entt::dispatcher& dispatcher,
         engine::input::InputManager& inputManager,
         engine::render::Renderer& renderer,
         engine::render::Camera& camera,
@@ -71,9 +75,10 @@ public:
     Context& operator=(Context&&) = delete;
 
 #pragma region GetterAndSetter
+    entt::dispatcher& getDispatcher() const { return m_dispatcher; }                            ///< @brief 获取事件分发器
     engine::input::InputManager& getInputManager() const { return m_inputManager; }             ///< @brief 获取输入管理器
-    engine::render::Renderer& getRenderer() const { return m_renderer; }                         ///< @brief 获取渲染器
-    engine::render::Camera& getCamera() const { return m_camera; }                               ///< @brief 获取相机
+    engine::render::Renderer& getRenderer() const { return m_renderer; }                        ///< @brief 获取渲染器
+    engine::render::Camera& getCamera() const { return m_camera; }                              ///< @brief 获取相机
     engine::render::TextRenderer& getTextRenderer() const { return m_textRenderer; }            ///< @brief 获取文本渲染器
     engine::resource::ResourceManager& getResourceManager() const { return m_resourceManager; } ///< @brief 获取资源管理器
     engine::core::GameState& getGameState() const { return m_gameState; }                       ///< @brief 获取游戏状态

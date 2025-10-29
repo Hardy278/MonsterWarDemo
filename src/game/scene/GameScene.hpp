@@ -4,13 +4,16 @@
 namespace game::scene {
 class GameScene final : public engine::scene::Scene {
 public:
-    GameScene(engine::core::Context& context, engine::scene::SceneManager& sceneManager);
+    GameScene(engine::core::Context& context);
     ~GameScene();
 
     void init() override;
     void clean() override;
 private:
-    void onAttack();
-    void onJump();
+    int sceneNum{0};
+    void onReplace();
+    void onPush();
+    void onPop();
+    void onQuit();
 };
 }

@@ -77,8 +77,9 @@ set(SOURCES
     src/engine/UI/UIManager.cpp
     src/engine/UI/UIPanel.cpp
 
-    src/engine/utils/Math.cpp
-    src/engine/utils/Alignment.cpp
+    src/engine/utils/Math.hpp
+    src/engine/utils/Events.hpp
+    src/engine/utils/Alignment.hpp
 
     src/game/scene/GameScene.cpp
 )

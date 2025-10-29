@@ -28,6 +28,8 @@
    - glm
    - spdlog
    - nlohmann_json
+   - EnTT
+   - immgui
 3. 游戏在`CMakeLists.txt`中直接设置了vcpkg的路径为编写者的本地路径`（嘻嘻，其实是我懒）`，如果你使用路径和游戏的不一样，请自行修改`CMakeLists.txt`中的`set(VCPKG_ROOT_DIR "你的vcpkg路径")`。
 
 ## 联系方式
