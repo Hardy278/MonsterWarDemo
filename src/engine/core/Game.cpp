@@ -38,7 +38,6 @@ void Game::run() {
     while (m_isRunning) {
         m_time->update();
         float deltaTime = static_cast<float>(m_time->getDeltaTime());
-        m_inputManager->update();
 
         handleEvents();
         update(deltaTime);
@@ -83,11 +82,7 @@ bool Game::init() {
 }
 
 void Game::handleEvents() {
-    if (m_inputManager->shouldQuit()) {
-        spdlog::info("GAME::收到来自输入管理器的退出信号");
-        m_isRunning = false;
-        return;
-    }
+    m_inputManager->update();
     m_sceneManager->handleInput();
 }
 
@@ -227,7 +222,7 @@ bool Game::initTextRenderer() {
 
 bool Game::initInputManager() {
     try {
-        m_inputManager = std::make_unique<engine::input::InputManager>(m_SDLRenderer, m_config.get());
+        m_inputManager = std::make_unique<engine::input::InputManager>(m_SDLRenderer, m_config.get(), m_dispatcher.get());
     } catch (const std::exception &e) {
         spdlog::error("GAME::initInputManager::输入管理器初始化失败: {}", e.what());
         return false;

@@ -40,20 +40,24 @@ void GameScene::clean() {
     Scene::clean();
 }
 
-void GameScene::onReplace() {
+bool GameScene::onReplace() {
     spdlog::info("GameScene::onReplace() {}", sceneNum);
     requestReplaceScene(std::make_unique<game::scene::GameScene>(m_context));
+    return true;
 }
-void GameScene::onPush() {
+bool GameScene::onPush() {
     spdlog::info("GameScene::onPush() {}", sceneNum);
     requestPushScene(std::make_unique<game::scene::GameScene>(m_context));
+    return true;
 }
-void GameScene::onPop() {
+bool GameScene::onPop() {
     spdlog::info("GameScene::onPop() {}", sceneNum);
     requestPopScene();
+    return true;
 }
-void GameScene::onQuit() {
+bool GameScene::onQuit() {
     spdlog::info("GameScene::onQuit() {}", sceneNum);
     quit();
+    return true;
 }
 } // namespace game::scene

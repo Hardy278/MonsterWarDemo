@@ -1,5 +1,6 @@
 #include "InputManager.hpp"
 #include "../core/Config.hpp"
+#include "../utils/Events.hpp"
 
 #include <entt/core/hashed_string.hpp>
 #include <entt/signal/dispatcher.hpp>
@@ -12,7 +13,8 @@
 
 namespace engine::input {
 
-InputManager::InputManager(SDL_Renderer *SDLRenderer, const engine::core::Config *config) : m_SDLRenderer(SDLRenderer) {
+InputManager::InputManager(SDL_Renderer *SDLRenderer, const engine::core::Config *config, entt::dispatcher *dispatcher)
+    : m_SDLRenderer(SDLRenderer), m_dispatcher(dispatcher) {
     // 检查SDL渲染器是否有效
     if (!SDLRenderer) {
         spdlog::error("INPUTMANAGER::SDL_Renderer 为空");            // 记录错误日志
@@ -25,7 +27,7 @@ InputManager::InputManager(SDL_Renderer *SDLRenderer, const engine::core::Config
     spdlog::trace("INPUTMANAGER::SDL_Renderer 初始化成功, 鼠标位置: ({}, {})", x, y);
 }
 
-entt::sink<entt::sigh<void()>> InputManager::onAction(entt::id_type actionNameID, ActionState actionState) {
+entt::sink<entt::sigh<bool()>> InputManager::onAction(entt::id_type actionNameID, ActionState actionState) {
     // 如果actionName不存在，自动创建一个 std::array<...>
     // .at() 会进行边界检查，更安全
     return m_actionToFunc[actionNameID].at(static_cast<size_t>(actionState));
@@ -48,13 +50,16 @@ void InputManager::update() {
     for (auto &[actionNameID, state] : m_actionStates) {
         if (state != ActionState::INACTIVE) { // 如果动作状态不是 INACTIVE，
             if (auto it = m_actionToFunc.find(actionNameID); it != m_actionToFunc.end()) {
-                it->second.at(static_cast<size_t>(state)).publish();
+                it->second.at(static_cast<size_t>(state)).collect([](bool result) {
+                    return result; // 收集结果并返回
+                });
             }
         }
     }
 }
 
 void InputManager::quit() {
+    m_dispatcher->trigger<engine::utils::QuitEvent>();
 }
 
 bool InputManager::isActionDown(entt::id_type actionNameID) const {
@@ -79,10 +84,7 @@ bool InputManager::isActionReleased(entt::id_type actionNameID) const {
 }
 
 glm::vec2 InputManager::getLogicalMousePosition() const {
-    glm::vec2 logicalPos;
-    // 通过窗口坐标获取渲染坐标（逻辑坐标）
-    SDL_RenderCoordinatesFromWindow(m_SDLRenderer, m_mousePosition.x, m_mousePosition.y, &logicalPos.x, &logicalPos.y);
-    return logicalPos;
+    return m_logicalMousePosition;
 }
 
 void InputManager::processEvent(const SDL_Event &event) {
@@ -90,9 +92,8 @@ void InputManager::processEvent(const SDL_Event &event) {
     case SDL_EVENT_KEY_DOWN:
     case SDL_EVENT_KEY_UP: {
         SDL_Scancode scancode = event.key.scancode; // 获取按键的scancode
-        bool isDown = event.key.down;
-        bool isRepeat = event.key.repeat;
-
+        bool         isDown   = event.key.down;
+        bool         isRepeat = event.key.repeat;
         auto it = m_inputToActions.find(scancode);
         if (it != m_inputToActions.end()) { // 如果按键有对应的action
             const std::vector<entt::id_type> &associatedActions = it->second;
@@ -105,8 +106,8 @@ void InputManager::processEvent(const SDL_Event &event) {
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
     case SDL_EVENT_MOUSE_BUTTON_UP: {
         Uint32 button = event.button.button; // 获取鼠标按钮
-        bool isDown = event.button.down;
-        auto it = m_inputToActions.find(button);
+        bool   isDown = event.button.down;
+        auto   it     = m_inputToActions.find(button);
         if (it != m_inputToActions.end()) { // 如果鼠标按钮有对应的action
             const std::vector<entt::id_type> &associatedActions = it->second;
             for (const auto &actionName : associatedActions) {
@@ -114,14 +115,16 @@ void InputManager::processEvent(const SDL_Event &event) {
                 updateActionState(actionName, isDown, false); // 更新action状态
             }
         }
-        m_mousePosition = {event.button.x, event.button.y}; // 在点击时更新鼠标位置
+        m_mousePosition = {event.button.x, event.button.y}; // 在点击时更新鼠标位置，同时更新逻辑坐标
+        SDL_RenderCoordinatesFromWindow(m_SDLRenderer, m_mousePosition.x, m_mousePosition.y, &m_logicalMousePosition.x, &m_logicalMousePosition.y);
         break;
     }
     case SDL_EVENT_MOUSE_MOTION: // 处理鼠标运动
         m_mousePosition = {event.motion.x, event.motion.y};
+        SDL_RenderCoordinatesFromWindow(m_SDLRenderer, m_mousePosition.x, m_mousePosition.y, &m_logicalMousePosition.x, &m_logicalMousePosition.y);
         break;
     case SDL_EVENT_QUIT:
-        m_shouldQuit = true;
+        quit();
         break;
     default:
         break;
@@ -151,13 +154,13 @@ void InputManager::initializeMappings(const engine::core::Config *config) {
     // 遍历 动作 -> 按键名称 的映射
     for (const auto &[actionName, keyNames] : actionsToKeyname) {
         // 每个动作对应一个动作状态，初始化为 INACTIVE
-        auto actionNameID = entt::hashed_string(actionName.c_str());
+        auto actionNameID            = entt::hashed_string(actionName.c_str());
         m_actionStates[actionNameID] = ActionState::INACTIVE;
         spdlog::trace("INPUTMANAGER::initializeMappings::映射动作: {}", actionName);
         // 设置 "按键 -> 动作" 的映射
         for (const auto &keyName : keyNames) {
-            SDL_Scancode scancode = scancodeFromString(keyName);  // 尝试根据按键名称获取scancode
-            Uint32 mouse_button = mouseButtonFromString(keyName); // 尝试根据按键名称获取鼠标按钮
+            SDL_Scancode scancode     = scancodeFromString(keyName);    // 尝试根据按键名称获取scancode
+            Uint32       mouse_button = mouseButtonFromString(keyName); // 尝试根据按键名称获取鼠标按钮
             // 未来可添加其它输入类型 ...
 
             if (scancode != SDL_SCANCODE_UNKNOWN) { // 如果scancode有效,则将action添加到scancode_to_actions_map_中

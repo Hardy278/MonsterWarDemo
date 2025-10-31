@@ -12,9 +12,9 @@ class GameScene final : public engine::scene::Scene {
 
   private:
     int sceneNum{0};
-    void onReplace();
-    void onPush();
-    void onPop();
-    void onQuit();
+    bool onReplace();
+    bool onPush();
+    bool onPop();
+    bool onQuit();
 };
 } // namespace game::scene
