@@ -3,17 +3,18 @@
 
 namespace game::scene {
 class GameScene final : public engine::scene::Scene {
-public:
-    GameScene(engine::core::Context& context);
+  public:
+    GameScene(engine::core::Context &context);
     ~GameScene();
 
     void init() override;
     void clean() override;
-private:
+
+  private:
     int sceneNum{0};
     void onReplace();
     void onPush();
     void onPop();
     void onQuit();
 };
-}
+} // namespace game::scene

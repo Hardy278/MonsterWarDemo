@@ -1,13 +1,13 @@
 #include "ParallaxComponent.hpp"
-#include "TransformComponent.hpp"
-#include "../object/GameObject.hpp"
 #include "../core/Context.hpp"
+#include "../object/GameObject.hpp"
 #include "../render/Renderer.hpp"
+#include "TransformComponent.hpp"
 
 #include <spdlog/spdlog.h>
 
 namespace engine::component {
-ParallaxComponent::ParallaxComponent(std::string_view textureID, glm::vec2 scrollFactor, glm::bvec2 repeat) 
+ParallaxComponent::ParallaxComponent(std::string_view textureID, glm::vec2 scrollFactor, glm::bvec2 repeat)
     : m_sprite(engine::render::Sprite(textureID)), m_scrollFactor(scrollFactor), m_repeat(repeat) {
     spdlog::trace("PARALLAXCOMPONENT::ParallaxComponent初始化完成, 纹理ID:{}", textureID);
 }

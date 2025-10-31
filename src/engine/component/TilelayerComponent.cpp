@@ -1,8 +1,8 @@
 #include "TilelayerComponent.hpp"
-#include "../object/GameObject.hpp"
 #include "../core/Context.hpp"
-#include "../render/Renderer.hpp"
+#include "../object/GameObject.hpp"
 #include "../render/Camera.hpp"
+#include "../render/Renderer.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -22,7 +22,7 @@ void TileLayerComponent::init() {
     spdlog::trace("TILELAYERCOMPONENT::init::初始化完成");
 }
 
-void TileLayerComponent::render(engine::core::Context& context) {
+void TileLayerComponent::render(engine::core::Context &context) {
     if (m_tileSize.x <= 0 || m_tileSize.y <= 0) return;
     // 遍历所有瓦片
     for (int y = 0; y < m_mapSize.y; ++y) {
@@ -30,14 +30,13 @@ void TileLayerComponent::render(engine::core::Context& context) {
             size_t index = static_cast<size_t>(y) * m_mapSize.x + x;
             // 检查索引有效性以及瓦片是否需要渲染
             if (index < m_tiles.size() && m_tiles[index].type != TileType::EMPTY) {
-                const auto& tileInfo = m_tiles[index];
+                const auto &tileInfo = m_tiles[index];
                 // 计算该瓦片在世界中的左上角位置 (drawSprite 预期接收左上角坐标)
                 glm::vec2 tileLeftTopPos = {
                     m_offset.x + static_cast<float>(x) * m_tileSize.x,
-                    m_offset.y + static_cast<float>(y) * m_tileSize.y
-                };
+                    m_offset.y + static_cast<float>(y) * m_tileSize.y};
                 // 但如果图片的大小与瓦片的大小不一致，需要调整 y 坐标 (瓦片层的对齐点是左下角)
-                if(static_cast<int>(tileInfo.sprite.getSourceRect()->h) != m_tileSize.y) {
+                if (static_cast<int>(tileInfo.sprite.getSourceRect()->h) != m_tileSize.y) {
                     tileLeftTopPos.y -= (tileInfo.sprite.getSourceRect()->h - static_cast<float>(m_tileSize.y));
                 }
                 // 执行绘制
@@ -47,7 +46,7 @@ void TileLayerComponent::render(engine::core::Context& context) {
     }
 }
 
-const TileInfo* TileLayerComponent::getTileInfoAt(glm::ivec2 pos) const {
+const TileInfo *TileLayerComponent::getTileInfoAt(glm::ivec2 pos) const {
     if (pos.x < 0 || pos.x >= m_mapSize.x || pos.y < 0 || pos.y >= m_mapSize.y) {
         spdlog::warn("TILELAYERCOMPONENT::getTileInfoAt::瓦片坐标越界: ({}, {})", pos.x, pos.y);
         return nullptr;
@@ -62,7 +61,7 @@ const TileInfo* TileLayerComponent::getTileInfoAt(glm::ivec2 pos) const {
 }
 
 TileType TileLayerComponent::getTileTypeAt(glm::ivec2 pos) const {
-    const TileInfo* info = getTileInfoAt(pos);
+    const TileInfo *info = getTileInfoAt(pos);
     return info ? info->type : TileType::EMPTY;
 }
 

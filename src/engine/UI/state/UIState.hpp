@@ -2,11 +2,11 @@
 #include <memory>
 
 namespace engine::core {
-    class Context;
+class Context;
 }
 
 namespace engine::ui {
-    class UIInteractive;
+class UIInteractive;
 }
 
 namespace engine::ui::state {
@@ -19,26 +19,27 @@ namespace engine::ui::state {
  */
 class UIState {
     friend class engine::ui::UIInteractive;
-protected:
-    engine::ui::UIInteractive* m_owner = nullptr;    ///< @brief 指向父节点
 
-public:
+  protected:
+    engine::ui::UIInteractive *m_owner = nullptr; ///< @brief 指向父节点
+
+  public:
     /**
      * @brief 构造函数传入父节点指针
      */
-    UIState(engine::ui::UIInteractive* owner) : m_owner(owner) {}
+    UIState(engine::ui::UIInteractive *owner) : m_owner(owner) {}
     virtual ~UIState() = default;
 
     // 删除拷贝和移动构造函数/赋值运算符
-    UIState(const UIState&) = delete;
-    UIState& operator=(const UIState&) = delete;
-    UIState(UIState&&) = delete;
-    UIState& operator=(UIState&&) = delete;
+    UIState(const UIState &) = delete;
+    UIState &operator=(const UIState &) = delete;
+    UIState(UIState &&) = delete;
+    UIState &operator=(UIState &&) = delete;
 
-protected:
-    // --- 核心方法 --- 
+  protected:
+    // --- 核心方法 ---
     virtual void enter() {}
-    virtual std::unique_ptr<UIState> handleInput(engine::core::Context& context) = 0;
+    virtual std::unique_ptr<UIState> handleInput(engine::core::Context &context) = 0;
 };
 
 } // namespace engine::ui::state

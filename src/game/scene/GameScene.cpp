@@ -1,10 +1,10 @@
 #include "GameScene.hpp"
-#include "../../engine/input/InputManager.hpp"
 #include "../../engine/core/Context.hpp"
+#include "../../engine/input/InputManager.hpp"
 #include "../../engine/utils/Events.hpp"
 
-#include <entt/signal/dispatcher.hpp>
 #include <entt/core/hashed_string.hpp>
+#include <entt/signal/dispatcher.hpp>
 #include <entt/signal/sigh.hpp>
 #include <spdlog/spdlog.h>
 
@@ -21,21 +21,21 @@ void GameScene::init() {
     sceneNum = num++;
     spdlog::info("GameScene::init() {}", sceneNum);
 
-    auto& inputManager = m_context.getInputManager();
-    inputManager.onAction(entt::hashed_string{"jump"}).connect<&GameScene::onReplace>(this);  // j
+    auto &inputManager = m_context.getInputManager();
+    inputManager.onAction(entt::hashed_string{"jump"}).connect<&GameScene::onReplace>(this);    // j
     inputManager.onAction(entt::hashed_string{"mouse_left"}).connect<&GameScene::onPush>(this); // mouse left
     inputManager.onAction(entt::hashed_string{"mouse_right"}).connect<&GameScene::onPop>(this); // mouse right
-    inputManager.onAction(entt::hashed_string{"pause"}).connect<&GameScene::onQuit>(this); // p
+    inputManager.onAction(entt::hashed_string{"pause"}).connect<&GameScene::onQuit>(this);      // p
 
     Scene::init();
 }
 
 void GameScene::clean() {
-    auto& inputManager = m_context.getInputManager();
-    inputManager.onAction(entt::hashed_string{"jump"}).disconnect<&GameScene::onReplace>(this);  // j
+    auto &inputManager = m_context.getInputManager();
+    inputManager.onAction(entt::hashed_string{"jump"}).disconnect<&GameScene::onReplace>(this);    // j
     inputManager.onAction(entt::hashed_string{"mouse_left"}).disconnect<&GameScene::onPush>(this); // mouse left
     inputManager.onAction(entt::hashed_string{"mouse_right"}).disconnect<&GameScene::onPop>(this); // mouse right
-    inputManager.onAction(entt::hashed_string{"pause"}).disconnect<&GameScene::onQuit>(this); // p
+    inputManager.onAction(entt::hashed_string{"pause"}).disconnect<&GameScene::onQuit>(this);      // p
 
     Scene::clean();
 }
@@ -56,4 +56,4 @@ void GameScene::onQuit() {
     spdlog::info("GameScene::onQuit() {}", sceneNum);
     quit();
 }
-}
+} // namespace game::scene

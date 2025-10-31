@@ -1,6 +1,6 @@
 #include "SceneManager.hpp"
-#include "Scene.hpp"
 #include "../core/Context.hpp"
+#include "Scene.hpp"
 
 #include <entt/signal/dispatcher.hpp>
 #include <spdlog/spdlog.h>
@@ -70,12 +70,12 @@ void SceneManager::onPopScene() {
     m_pendingAction = PendingAction::Pop;
 }
 
-void SceneManager::onPushScene(engine::utils::PushSceneEvent& event) {
+void SceneManager::onPushScene(engine::utils::PushSceneEvent &event) {
     m_pendingAction = PendingAction::Push;
     m_pendingScene = std::move(event.scene);
 }
 
-void SceneManager::onReplaceScene(engine::utils::ReplaceSceneEvent& event) {
+void SceneManager::onReplaceScene(engine::utils::ReplaceSceneEvent &event) {
     m_pendingAction = PendingAction::Replace;
     m_pendingScene = std::move(event.scene);
 }
@@ -84,17 +84,17 @@ void SceneManager::processPendingActions() {
     if (m_pendingAction == PendingAction::None) return;
 
     switch (m_pendingAction) {
-        case PendingAction::Pop:
-            popScene(); // 弹出场景
-            break;
-        case PendingAction::Replace:
-            replaceScene(std::move(m_pendingScene)); // 替换场景
-            break;
-        case PendingAction::Push:
-            pushScene(std::move(m_pendingScene)); // 压入场景
-            break;
-        case PendingAction::None:
-            break;
+    case PendingAction::Pop:
+        popScene(); // 弹出场景
+        break;
+    case PendingAction::Replace:
+        replaceScene(std::move(m_pendingScene)); // 替换场景
+        break;
+    case PendingAction::Push:
+        pushScene(std::move(m_pendingScene)); // 压入场景
+        break;
+    case PendingAction::None:
+        break;
     }
     m_pendingAction = PendingAction::None; // 重置挂起的操作
 }

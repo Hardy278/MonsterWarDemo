@@ -1,38 +1,38 @@
 #pragma once
-#include "Component.hpp"
 #include "../render/Sprite.hpp"
-#include <vector>
+#include "Component.hpp"
 #include <glm/vec2.hpp>
+#include <vector>
 
 namespace engine::render {
-    class Sprite;
+class Sprite;
 } // namespace engine::render
 
 namespace engine::core {
-    class Context;
+class Context;
 } // namespace engine::core
 
 namespace engine::component {
 
 enum class TileType {
-    EMPTY,      ///< @brief 空白瓦片
-    NORMAL,     ///< @brief 普通瓦片
-    SOLID,      ///< @brief 静止可碰撞瓦片
-    UNISOLID,   ///< @brief 单向静止可碰撞瓦片
-    SLOPE_0_1,  ///< @brief 斜坡瓦片，高度:左0  右1
-    SLOPE_1_0,  ///< @brief 斜坡瓦片，高度:左1  右0
-    SLOPE_0_2,  ///< @brief 斜坡瓦片，高度:左0  右1/2
-    SLOPE_2_1,  ///< @brief 斜坡瓦片，高度:左1/2右1
-    SLOPE_1_2,  ///< @brief 斜坡瓦片，高度:左1  右1/2
-    SLOPE_2_0,  ///< @brief 斜坡瓦片，高度:左1/2右0
-    HAZARD,     ///< @brief 危险瓦片（例如火焰、尖刺等）
-    LADDER,     ///< @brief 梯子瓦片
+    EMPTY,     ///< @brief 空白瓦片
+    NORMAL,    ///< @brief 普通瓦片
+    SOLID,     ///< @brief 静止可碰撞瓦片
+    UNISOLID,  ///< @brief 单向静止可碰撞瓦片
+    SLOPE_0_1, ///< @brief 斜坡瓦片，高度:左0  右1
+    SLOPE_1_0, ///< @brief 斜坡瓦片，高度:左1  右0
+    SLOPE_0_2, ///< @brief 斜坡瓦片，高度:左0  右1/2
+    SLOPE_2_1, ///< @brief 斜坡瓦片，高度:左1/2右1
+    SLOPE_1_2, ///< @brief 斜坡瓦片，高度:左1  右1/2
+    SLOPE_2_0, ///< @brief 斜坡瓦片，高度:左1/2右0
+    HAZARD,    ///< @brief 危险瓦片（例如火焰、尖刺等）
+    LADDER,    ///< @brief 梯子瓦片
     // 未来补充其它类型
 };
 
 struct TileInfo {
-    render::Sprite sprite;      ///< @brief 瓦片的视觉表示
-    TileType type;              ///< @brief 瓦片的逻辑类型
+    render::Sprite sprite; ///< @brief 瓦片的视觉表示
+    TileType type;         ///< @brief 瓦片的逻辑类型
     TileInfo(render::Sprite s = render::Sprite(), TileType t = TileType::EMPTY) : sprite(std::move(s)), type(t) {}
 };
 
@@ -44,14 +44,15 @@ struct TileInfo {
  */
 class TileLayerComponent final : public Component {
     friend class engine::object::GameObject;
-private:
-    glm::ivec2 m_tileSize;               ///< @brief 单个瓦片尺寸（像素）
-    glm::ivec2 m_mapSize;                ///< @brief 地图尺寸（瓦片数）
-    std::vector<TileInfo> m_tiles;       ///< @brief 存储所有瓦片信息 (按"行主序"存储, index = y * map_width_ + x)
-    glm::vec2 m_offset = {0.0f, 0.0f};   ///< @brief 瓦片层在世界中的偏移量 (瓦片层通常不需要缩放及旋转，因此不引入Transform组件) offset_ 最好也保持默认的0，以免增加不必要的复杂性
-    bool m_isHidden = false;             ///< @brief 是否隐藏（不渲染）
 
-public:
+  private:
+    glm::ivec2 m_tileSize;             ///< @brief 单个瓦片尺寸（像素）
+    glm::ivec2 m_mapSize;              ///< @brief 地图尺寸（瓦片数）
+    std::vector<TileInfo> m_tiles;     ///< @brief 存储所有瓦片信息 (按"行主序"存储, index = y * map_width_ + x)
+    glm::vec2 m_offset = {0.0f, 0.0f}; ///< @brief 瓦片层在世界中的偏移量 (瓦片层通常不需要缩放及旋转，因此不引入Transform组件) offset_ 最好也保持默认的0，以免增加不必要的复杂性
+    bool m_isHidden = false;           ///< @brief 是否隐藏（不渲染）
+
+  public:
     TileLayerComponent() = default;
     /**
      * @brief 构造函数
@@ -59,15 +60,14 @@ public:
      * @param mapSize 地图尺寸（瓦片数）
      * @param tiles 初始化瓦片数据的容器 (会被移动)
      */
-    TileLayerComponent(glm::ivec2 tileSize, glm::ivec2 mapSize, std::vector<TileInfo>&& tiles);
-    
-#pragma region GetterAndSetter
+    TileLayerComponent(glm::ivec2 tileSize, glm::ivec2 mapSize, std::vector<TileInfo> &&tiles);
+
     /**
      * @brief 根据瓦片坐标获取瓦片信息
      * @param pos 瓦片坐标 (0 <= x < map_size_.x, 0 <= y < map_size_.y)
      * @return const TileInfo* 指向瓦片信息的指针，如果坐标无效则返回 nullptr
      */
-    const TileInfo* getTileInfoAt(glm::ivec2 pos) const;
+    const TileInfo *getTileInfoAt(glm::ivec2 pos) const;
     /**
      * @brief 根据瓦片坐标获取瓦片类型
      * @param pos 瓦片坐标 (0 <= x < map_size_.x, 0 <= y < map_size_.y)
@@ -79,24 +79,23 @@ public:
      * @param worldPos 世界坐标
      * @return TileType 瓦片类型，如果坐标无效或对应空瓦片则返回 TileType::EMPTY
      */
-    TileType getTileTypeAtWorldPos(const glm::vec2& worldPos) const;
+    TileType getTileTypeAtWorldPos(const glm::vec2 &worldPos) const;
 
-    glm::ivec2 getTileSize() const { return m_tileSize; }               ///< @brief 获取单个瓦片尺寸
-    glm::ivec2 getMapSize() const { return m_mapSize; }                 ///< @brief 获取地图尺寸
+    glm::ivec2 getTileSize() const { return m_tileSize; } ///< @brief 获取单个瓦片尺寸
+    glm::ivec2 getMapSize() const { return m_mapSize; }   ///< @brief 获取地图尺寸
     glm::vec2 getWorldSize() const { return glm::vec2(m_mapSize.x * m_tileSize.x, m_mapSize.y * m_tileSize.y); }
-    const std::vector<TileInfo>& getTiles() const { return m_tiles; }    ///< @brief 获取瓦片容器
-    const glm::vec2& getOffset() const { return m_offset; }              ///< @brief 获取瓦片层的偏移量
-    bool isHidden() const { return m_isHidden; }                        ///< @brief 获取是否隐藏（不渲染）
+    const std::vector<TileInfo> &getTiles() const { return m_tiles; } ///< @brief 获取瓦片容器
+    const glm::vec2 &getOffset() const { return m_offset; }           ///< @brief 获取瓦片层的偏移量
+    bool isHidden() const { return m_isHidden; }                      ///< @brief 获取是否隐藏（不渲染）
 
-    void setOffset(glm::vec2 offset) { m_offset = std::move(offset); }       ///< @brief 设置瓦片层的偏移量
-    void setHidden(bool hidden) { m_isHidden = hidden; }                ///< @brief 设置是否隐藏（不渲染）
-#pragma endregion
+    void setOffset(glm::vec2 offset) { m_offset = std::move(offset); } ///< @brief 设置瓦片层的偏移量
+    void setHidden(bool hidden) { m_isHidden = hidden; }               ///< @brief 设置是否隐藏（不渲染）
 
-protected:
+  protected:
     // 核心循环方法
     void init() override;
-    void update(float, engine::core::Context&) override {}
-    void render(engine::core::Context& context) override;
+    void update(float, engine::core::Context &) override {}
+    void render(engine::core::Context &context) override;
 };
 
 } // namespace engine::component

@@ -1,6 +1,7 @@
 #include "Component.hpp"
 
 namespace engine::component {
+
 void Component::setOwner(engine::object::GameObject *owner) {
     m_owner = owner;
 }

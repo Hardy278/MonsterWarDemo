@@ -15,10 +15,10 @@ void Animation::addFrame(SDL_FRect sourceRect, float duration) {
     m_totalDuration += duration;
 }
 
-const AnimationFrame& Animation::getFrame(float time) const {
+const AnimationFrame &Animation::getFrame(float time) const {
     if (m_frames.empty()) {
         spdlog::error("动画 '{}' 没有帧，无法获取帧", m_name);
-        return m_frames.back();      // 返回最后一帧（空的）
+        return m_frames.back(); // 返回最后一帧（空的）
     }
     float currentTime = time;
     if (m_loop && m_totalDuration > 0.0f) {
@@ -32,7 +32,7 @@ const AnimationFrame& Animation::getFrame(float time) const {
     }
     // 遍历帧以找到正确的帧
     float accumulatedTime = 0.0f;
-    for (const auto& frame : m_frames) {
+    for (const auto &frame : m_frames) {
         accumulatedTime += frame.duration;
         if (currentTime < accumulatedTime) {
             return frame;
@@ -43,4 +43,4 @@ const AnimationFrame& Animation::getFrame(float time) const {
     return m_frames.back();
 }
 
-} // namespace engine::render 
+} // namespace engine::render

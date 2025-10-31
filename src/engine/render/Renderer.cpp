@@ -1,6 +1,6 @@
 #include "Renderer.hpp"
-#include "Camera.hpp"
 #include "../resource/ResourceManager.hpp"
+#include "Camera.hpp"
 
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
@@ -21,7 +21,6 @@ Renderer::Renderer(SDL_Renderer *renderer, resource::ResourceManager *resourceMa
     setDrawColor(0, 0, 0, 255); // 设置默认颜色为黑色
     spdlog::trace("RENDERER::初始化成功");
 }
-
 
 /// @name 绘制部分
 /// @{
@@ -111,10 +110,10 @@ void Renderer::drawUISprite(const Sprite &sprite, const glm::vec2 &position, con
     }
 
     SDL_FRect destRect = {position.x, position.y, 0, 0}; // 初始化 destRect, 后续会根据 size 和 srcRect 进行设置
-    if (size.has_value()) {              // 如果提供尺寸，则使用提供的尺寸
+    if (size.has_value()) {                              // 如果提供尺寸，则使用提供的尺寸
         destRect.w = size.value().x;
         destRect.h = size.value().y;
-    } else {                  // 如果没有提供尺寸，则使用纹理的原始尺寸
+    } else { // 如果没有提供尺寸，则使用纹理的原始尺寸
         destRect.w = srcRect.value().w;
         destRect.h = srcRect.value().h;
     }
@@ -181,7 +180,7 @@ std::optional<SDL_FRect> Renderer::getSpriteSrcRect(const Sprite &sprite) {
         return srcRect;
     } else {
         SDL_FRect result = {0, 0, 0, 0};
-        if(!SDL_GetTextureSize(texture, &result.w, &result.h)) {
+        if (!SDL_GetTextureSize(texture, &result.w, &result.h)) {
             spdlog::error("RENDERER::getSpriteSrcRect::ERROR::获取精灵原矩形失败: 纹理ID为{}", sprite.getTextureID());
             return std::nullopt;
         }
@@ -191,7 +190,7 @@ std::optional<SDL_FRect> Renderer::getSpriteSrcRect(const Sprite &sprite) {
 
 bool Renderer::isRectInViewport(const Camera &camera, const SDL_FRect &rect) {
     glm::vec2 viewportSize = camera.getViewportSize();
-    return rect.x + rect.w >= 0 && rect.x <= viewportSize.x &&  // 相当于 AABB 的碰撞检测
+    return rect.x + rect.w >= 0 && rect.x <= viewportSize.x && // 相当于 AABB 的碰撞检测
            rect.y + rect.h >= 0 && rect.y <= viewportSize.y;
 }
 

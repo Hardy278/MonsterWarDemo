@@ -8,7 +8,7 @@
 
 namespace engine::resource {
 
-void TextureManager::SDLTextureDeleter::operator()(SDL_Texture* texture) const {
+void TextureManager::SDLTextureDeleter::operator()(SDL_Texture *texture) const {
     SDL_DestroyTexture(texture);
 }
 

@@ -1,16 +1,17 @@
 #include "HealthComponent.hpp"
 #include "../../engine/object/GameObject.hpp"
-#include <spdlog/spdlog.h>
 #include <glm/common.hpp>
+#include <spdlog/spdlog.h>
 
 namespace engine::component {
 
 HealthComponent::HealthComponent(int maxHealth, float invincibilityDuration)
     : m_maxHealth(glm::max(1, maxHealth)), // 确保最大生命值至少为 1
-      m_currentHealth(m_maxHealth),         // 初始化当前生命值为最大生命值
-      m_invincibilityDuration(invincibilityDuration) {}
+      m_currentHealth(m_maxHealth),        // 初始化当前生命值为最大生命值
+      m_invincibilityDuration(invincibilityDuration) {
+}
 
-void HealthComponent::update(float deltaTime, engine::core::Context&) {
+void HealthComponent::update(float deltaTime, engine::core::Context &) {
     // 更新无敌状态计时器
     if (m_isInvincible) {
         m_invincibilityTimer -= deltaTime;
@@ -37,7 +38,7 @@ bool HealthComponent::takeDamage(int damageAmount) {
         setInvincible(m_invincibilityDuration);
     }
     spdlog::debug("HEALTHCOMPONENT::takeDamage::游戏对象 '{}' 受到了 {} 点伤害，当前生命值: {}/{}。", m_owner ? m_owner->getName() : "Unknown", damageAmount, m_currentHealth, m_maxHealth);
-    return true;        // 造成伤害，返回true
+    return true; // 造成伤害，返回true
 }
 
 int HealthComponent::heal(int healAmount) {
@@ -64,7 +65,7 @@ void HealthComponent::setInvincible(float duration) {
 }
 
 void HealthComponent::setMaxHealth(int maxHealth) {
-    m_maxHealth = glm::max(1, maxHealth); // 确保最大生命值至少为 1
+    m_maxHealth = glm::max(1, maxHealth);                     // 确保最大生命值至少为 1
     m_currentHealth = glm::min(m_currentHealth, m_maxHealth); // 确保当前生命值不超过最大生命值
 }
 

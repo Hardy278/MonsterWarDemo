@@ -8,15 +8,16 @@ namespace engine::ui::state {
  *
  * 当鼠标悬停在UI元素上时，会切换到该状态。
  */
-class UIHoverState final: public UIState {
+class UIHoverState final : public UIState {
     friend class engine::ui::UIInteractive;
-public:
-    UIHoverState(engine::ui::UIInteractive* owner) : UIState(owner) {}
+
+  public:
+    UIHoverState(engine::ui::UIInteractive *owner) : UIState(owner) {}
     ~UIHoverState() override = default;
 
-private:
+  private:
     void enter() override;
-    std::unique_ptr<UIState> handleInput(engine::core::Context& context) override;
+    std::unique_ptr<UIState> handleInput(engine::core::Context &context) override;
 };
 
 } // namespace engine::ui::state

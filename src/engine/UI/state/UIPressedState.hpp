@@ -8,15 +8,16 @@ namespace engine::ui::state {
  *
  * 当鼠标按下UI元素时，会切换到该状态。
  */
-class UIPressedState final: public UIState {
+class UIPressedState final : public UIState {
     friend class engine::ui::UIInteractive;
-public:
-    UIPressedState(engine::ui::UIInteractive* owner) : UIState(owner) {}
+
+  public:
+    UIPressedState(engine::ui::UIInteractive *owner) : UIState(owner) {}
     ~UIPressedState() override = default;
 
-private:
+  private:
     void enter() override;
-    std::unique_ptr<UIState> handleInput(engine::core::Context& context) override;
+    std::unique_ptr<UIState> handleInput(engine::core::Context &context) override;
 };
 
 } // namespace engine::ui::state

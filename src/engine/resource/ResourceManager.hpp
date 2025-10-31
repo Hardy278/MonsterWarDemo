@@ -23,13 +23,13 @@ class FontManager;
  * @note 资源管理器负责管理所有的资源，包括纹理、字体等
  */
 class ResourceManager final {
-private:
+  private:
     /// @name 资源管理器子组件对象
     /// @{
     std::unique_ptr<TextureManager> m_textureManager;
-    std::unique_ptr<FontManager>    m_fontManager;
+    std::unique_ptr<FontManager> m_fontManager;
     /// @}
-public:
+  public:
     /**
      * @brief 资源管理器构造函数
      * @param renderer SDL 渲染器，传递给 TextureManager，不能为空
@@ -51,23 +51,22 @@ public:
 
     /// @name --- Texture ---
     /// @{
-    SDL_Texture* loadTexture(const std::string_view path);
-    SDL_Texture* getTexture(const std::string_view path);
+    SDL_Texture *loadTexture(const std::string_view path);
+    SDL_Texture *getTexture(const std::string_view path);
     glm::vec2 getTextureSize(const std::string_view path);
     void unloadTexture(const std::string_view path);
     void clearTextures();
     /// @}
 
-    
     /// @name --- Font ---
     /// @{
-    TTF_Font* loadFont(const std::string_view path, int size);
-    TTF_Font* getFont(const std::string_view path, int size);
+    TTF_Font *loadFont(const std::string_view path, int size);
+    TTF_Font *getFont(const std::string_view path, int size);
     void unloadFont(const std::string_view path, int size);
     void clearFonts();
     /// @}
 
-/// @}
+    /// @}
 };
 
 } // namespace engine::resource

@@ -7,16 +7,16 @@ namespace engine::ui {
 
 /**
  * @brief 按钮UI元素
- * 
+ *
  * 继承自UIInteractive，用于创建可交互的按钮。
  * 支持三种状态：正常、悬停、按下。
  * 支持回调函数，当按钮被点击时调用。
  */
-class UIButton final: public UIInteractive {
-private:
-    std::function<void()> m_callback;        ///< @brief 可自定义的函数（函数包装器）
+class UIButton final : public UIInteractive {
+  private:
+    std::function<void()> m_callback; ///< @brief 可自定义的函数（函数包装器）
 
-public:
+  public:
     /**
      * @brief 构造函数
      * @param normalSpriteID 正常状态的精灵ID
@@ -27,21 +27,19 @@ public:
      * @param callback 回调函数
      */
     UIButton(
-        engine::core::Context& context,
+        engine::core::Context &context,
         std::string_view normalSpriteID,
         std::string_view hoverSpriteID,
         std::string_view pressedSpriteID,
-        glm::vec2 position = {0.0f, 0.0f}, 
-        glm::vec2 size = {0.0f, 0.0f}, 
-        std::function<void()> callback = nullptr
-    );
+        glm::vec2 position = {0.0f, 0.0f},
+        glm::vec2 size = {0.0f, 0.0f},
+        std::function<void()> callback = nullptr);
     ~UIButton() override = default;
 
-    void clicked() override;     ///< @brief 重写基类方法，当按钮被点击时调用回调函数
+    void clicked() override; ///< @brief 重写基类方法，当按钮被点击时调用回调函数
 
-    void setCallback(std::function<void()> callback) { m_callback = std::move(callback); }   ///< @brief 设置点击回调函数
-    std::function<void()> getCallback() const { return m_callback; }                         ///< @brief 获取点击回调函数
-
+    void setCallback(std::function<void()> callback) { m_callback = std::move(callback); } ///< @brief 设置点击回调函数
+    std::function<void()> getCallback() const { return m_callback; }                       ///< @brief 获取点击回调函数
 };
 
 } // namespace engine::ui

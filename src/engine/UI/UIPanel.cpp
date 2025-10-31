@@ -11,7 +11,7 @@ UIPanel::UIPanel(glm::vec2 position, glm::vec2 size, std::optional<engine::utils
     spdlog::trace("UIPanel 构造完成。");
 }
 
-void UIPanel::render(engine::core::Context& context) {
+void UIPanel::render(engine::core::Context &context) {
     if (!m_visible) return;
 
     if (m_backgroundColor) {
@@ -21,4 +21,4 @@ void UIPanel::render(engine::core::Context& context) {
     UIElement::render(context); // 调用基类渲染方法(绘制子节点)
 }
 
-} // namespace engine::ui 
+} // namespace engine::ui

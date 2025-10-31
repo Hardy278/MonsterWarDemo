@@ -1,9 +1,8 @@
 #include "Sprite.hpp"
 
 namespace engine::render {
-Sprite::Sprite(const std::string_view textureID, const std::optional<SDL_FRect>& sourceRect, bool isFlipped)
-    : m_textureID(textureID), m_sourceRect(sourceRect), m_isFlipped(isFlipped) { }
-
+Sprite::Sprite(const std::string_view textureID, const std::optional<SDL_FRect> &sourceRect, bool isFlipped)
+    : m_textureID(textureID), m_sourceRect(sourceRect), m_isFlipped(isFlipped) {}
 
 /// @name getter / setter
 /// @{
@@ -23,7 +22,7 @@ void Sprite::setFlipped(bool isFlipped) {
     m_isFlipped = isFlipped;
 }
 
-void Sprite::setSourceRect(const std::optional<SDL_FRect>& sourceRect) {
+void Sprite::setSourceRect(const std::optional<SDL_FRect> &sourceRect) {
     m_sourceRect = sourceRect;
 }
 

@@ -1,8 +1,8 @@
 #include "UIInteractive.hpp"
-#include "state/UIState.hpp"
 #include "../core/Context.hpp"
 #include "../render/Renderer.hpp"
 #include "../resource/ResourceManager.hpp"
+#include "state/UIState.hpp"
 #include <spdlog/spdlog.h>
 
 namespace engine::ui {
@@ -41,7 +41,7 @@ void UIInteractive::setSprite(std::string_view name) {
 }
 
 bool UIInteractive::handleInput(engine::core::Context &context) {
-    if (UIElement::handleInput(context)) {  
+    if (UIElement::handleInput(context)) {
         return true;
     }
     // 先更新子节点，再更新自己（状态）

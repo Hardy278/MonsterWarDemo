@@ -1,13 +1,13 @@
 #include "Scene.hpp"
-#include "../object/GameObject.hpp"
+#include "../UI/UIManager.hpp"
 #include "../core/Context.hpp"
 #include "../core/GameState.hpp"
+#include "../object/GameObject.hpp"
 #include "../render/Camera.hpp"
-#include "../UI/UIManager.hpp"
 #include "../utils/Events.hpp"
 
-#include <spdlog/spdlog.h>
 #include <entt/signal/dispatcher.hpp>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
 
@@ -19,7 +19,6 @@ Scene::Scene(std::string_view name, engine::core::Context &context)
 }
 
 Scene::~Scene() = default;
-
 
 /// @name 生命周期管理
 /// @{
@@ -82,16 +81,19 @@ void Scene::clean() {
 }
 /// @}
 
-
 /// @name 游戏对象管理
 /// @{
 void Scene::addGameObject(std::unique_ptr<engine::object::GameObject> &&gameObject) {
-    if (gameObject) m_gameObjects.push_back(std::move(gameObject));
-    else spdlog::warn("SCENE::addGameObject::WARN::\"{}\"场景添加游戏对象失败: 空游戏对象", m_sceneName);
+    if (gameObject)
+        m_gameObjects.push_back(std::move(gameObject));
+    else
+        spdlog::warn("SCENE::addGameObject::WARN::\"{}\"场景添加游戏对象失败: 空游戏对象", m_sceneName);
 }
 void Scene::safeAddGameObject(std::unique_ptr<engine::object::GameObject> &&gameObject) {
-    if (gameObject) m_pendingAdditions.push_back(std::move(gameObject));
-    else spdlog::warn("SCENE::safeAddGameObject::WARN::\"{}\"场景安全添加游戏对象失败: 空游戏对象", m_sceneName);
+    if (gameObject)
+        m_pendingAdditions.push_back(std::move(gameObject));
+    else
+        spdlog::warn("SCENE::safeAddGameObject::WARN::\"{}\"场景安全添加游戏对象失败: 空游戏对象", m_sceneName);
 }
 void Scene::removeGameObject(engine::object::GameObject *gameObjectPtr) {
     if (!gameObjectPtr) {
@@ -125,10 +127,10 @@ engine::object::GameObject *Scene::findGameObjectByName(std::string_view name) c
 void Scene::requestPopScene() {
     m_context.getDispatcher().trigger<engine::utils::PopSceneEvent>();
 }
-void Scene::requestPushScene(std::unique_ptr<engine::scene::Scene>&& scene) {
+void Scene::requestPushScene(std::unique_ptr<engine::scene::Scene> &&scene) {
     m_context.getDispatcher().trigger<engine::utils::PushSceneEvent>(engine::utils::PushSceneEvent{std::move(scene)});
 }
-void Scene::requestReplaceScene(std::unique_ptr<engine::scene::Scene>&& scene) {
+void Scene::requestReplaceScene(std::unique_ptr<engine::scene::Scene> &&scene) {
     m_context.getDispatcher().trigger<engine::utils::ReplaceSceneEvent>(engine::utils::ReplaceSceneEvent{std::move(scene)});
 }
 void Scene::quit() {

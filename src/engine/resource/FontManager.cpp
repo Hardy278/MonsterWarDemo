@@ -21,7 +21,7 @@ void FontManager::SDLFontDeleter::operator()(TTF_Font *font) const {
 }
 
 FontManager::FontManager() {
-    if(!TTF_WasInit() && !TTF_Init()) {
+    if (!TTF_WasInit() && !TTF_Init()) {
         throw std::runtime_error("RESOURCEMANAGER::FONTMANAGER::初始化 SDL_ttf 失败: " + std::string(SDL_GetError()));
     }
     spdlog::trace("RESOURCEMANAGER::FONTMANAGER::FontManager初始化成功");
@@ -62,7 +62,7 @@ TTF_Font *FontManager::loadFont(const std::string_view path, int size) {
 }
 
 TTF_Font *FontManager::getFont(const std::string_view path, int size) {
-    FontKey key = { std::string(path), size };
+    FontKey key = {std::string(path), size};
     auto it = m_fonts.find(key);
     if (it != m_fonts.end()) {
         return it->second.get();
@@ -72,12 +72,12 @@ TTF_Font *FontManager::getFont(const std::string_view path, int size) {
 }
 
 void FontManager::unloadFont(const std::string_view path, int size) {
-    FontKey key = { std::string(path), size };
+    FontKey key = {std::string(path), size};
     auto it = m_fonts.find(key);
     if (it != m_fonts.end()) {
         spdlog::debug("RESOURCEMANAGER::FONTMANAGER::unloadFont::字体\"{}\"({}pt)已卸载", path, size);
         m_fonts.erase(it);
-    } else {    
+    } else {
         spdlog::warn("RESOURCEMANAGER::FONTMANAGER::unloadFont::字体\"{}\"({}pt)不存在", path, size);
     }
 }
@@ -89,4 +89,4 @@ void FontManager::clearFonts() {
     }
 }
 /// @}
-}
+} // namespace engine::resource

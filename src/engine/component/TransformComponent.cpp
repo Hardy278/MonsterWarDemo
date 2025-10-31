@@ -1,9 +1,8 @@
 #include "TransformComponent.hpp"
-#include "SpriteComponent.hpp"
 #include "../object/GameObject.hpp"
+#include "SpriteComponent.hpp"
 
-namespace engine::component { 
-
+namespace engine::component {
 
 void TransformComponent::setScale(glm::vec2 scale) {
     m_scale = std::move(scale);

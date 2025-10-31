@@ -39,46 +39,13 @@ public:
      */
     Sprite(const std::string_view textureID, const std::optional<SDL_FRect>& sourceRect = std::nullopt, bool isFlipped = false);
 
-    /// @name getter / setter
-    /// @{
-    
-    /**
-     * @brief 获取纹理ID
-     * @return const std::string& 纹理ID的常量引用
-     */
     const std::string_view getTextureID() const;
-    
-    /**
-     * @brief 获取源矩形区域
-     * @return const std::optional<SDL_Rect>& 源矩形区域的常量引用
-     */
     const std::optional<SDL_FRect>& getSourceRect() const;
-    
-    /**
-     * @brief 获取翻转状态
-     * @return bool 是否被翻转
-     */
     bool isFlipped() const;
 
-    /**
-     * @brief 设置纹理ID
-     * @param textureID 新的纹理ID
-     */
     void setTextureID(const std::string_view textureID);
-    
-    /**
-     * @brief 设置源矩形区域
-     * @param sourceRect 新的源矩形区域，可选
-     */
     void setSourceRect(const std::optional<SDL_FRect>& sourceRect);
-    
-    /**
-     * @brief 设置翻转状态
-     * @param isFlipped 是否翻转
-     */
     void setFlipped(bool isFlipped);
-    
-    /// @}
 };
 
 } // namespace engine::render

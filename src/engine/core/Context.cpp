@@ -1,24 +1,23 @@
 #include "Context.hpp"
 #include "../input/InputManager.hpp"
-#include "../render/Renderer.hpp"
 #include "../render/Camera.hpp"
+#include "../render/Renderer.hpp"
 #include "../render/TextRenderer.hpp"
 #include "../resource/ResourceManager.hpp"
 
-#include <spdlog/spdlog.h>
 #include <entt/signal/dispatcher.hpp>
+#include <spdlog/spdlog.h>
 
 namespace engine::core {
 Context::Context(
     entt::dispatcher &dispatcher,
-    engine::input::InputManager &inputManager, 
-    engine::render::Renderer &renderer, 
-    engine::render::Camera &camera, 
+    engine::input::InputManager &inputManager,
+    engine::render::Renderer &renderer,
+    engine::render::Camera &camera,
     engine::render::TextRenderer &textRenderer,
     engine::resource::ResourceManager &resourceManager,
-    engine::core::GameState& gameState
-) : m_dispatcher(dispatcher), m_inputManager(inputManager), m_renderer(renderer), m_camera(camera),
-    m_textRenderer(textRenderer), m_resourceManager(resourceManager), m_gameState(gameState) {
+    engine::core::GameState &gameState) : m_dispatcher(dispatcher), m_inputManager(inputManager), m_renderer(renderer), m_camera(camera),
+                                          m_textRenderer(textRenderer), m_resourceManager(resourceManager), m_gameState(gameState) {
     spdlog::trace("CONTEXT::上下文已创建，包括：输入管理器、渲染器、相机、资源管理器和游戏状态");
 }
 } // namespace engine::core

@@ -4,8 +4,8 @@
 
 namespace engine::core {
 
-GameState::GameState(SDL_Window* window, SDL_Renderer* renderer, State initialState)
-    : m_window(window), m_renderer(renderer), m_currentState(initialState){
+GameState::GameState(SDL_Window *window, SDL_Renderer *renderer, State initialState)
+    : m_window(window), m_renderer(renderer), m_currentState(initialState) {
     if (m_window == nullptr || m_renderer == nullptr) {
         spdlog::error("GAMESTATE::窗口或渲染器为空");
         throw std::runtime_error("GAMESTATE::窗口或渲染器不能为空");
@@ -29,7 +29,7 @@ glm::vec2 GameState::getWindowSize() const {
     return glm::vec2(width, height);
 }
 
-void GameState::setWindowSize(const glm::vec2& m_windowsize) {
+void GameState::setWindowSize(const glm::vec2 &m_windowsize) {
     SDL_SetWindowSize(m_window, static_cast<int>(m_windowsize.x), static_cast<int>(m_windowsize.y));
 }
 
@@ -40,10 +40,9 @@ glm::vec2 GameState::getLogicalSize() const {
     return glm::vec2(width, height);
 }
 
-void GameState::setLogicalSize(const glm::vec2& logicalSize) {
+void GameState::setLogicalSize(const glm::vec2 &logicalSize) {
     SDL_SetRenderLogicalPresentation(m_renderer, static_cast<int>(logicalSize.x), static_cast<int>(logicalSize.y), SDL_LOGICAL_PRESENTATION_LETTERBOX);
     spdlog::trace("GAMESTATE::setLogicalSize::逻辑分辨率设置为: {}x{}", logicalSize.x, logicalSize.y);
 }
 
-
-} // namespace engine::core 
+} // namespace engine::core

@@ -1,21 +1,21 @@
 #include "Game.hpp"
-#include "Time.hpp"
-#include "Config.hpp"
-#include "GameState.hpp"
-#include "../resource/ResourceManager.hpp"
-#include "../render/Renderer.hpp"
-#include "../render/Camera.hpp"
-#include "../render/TextRenderer.hpp"
-#include "../input/InputManager.hpp"
-#include "../object/GameObject.hpp"
 #include "../component/SpriteComponent.hpp"
 #include "../component/TransformComponent.hpp"
+#include "../input/InputManager.hpp"
+#include "../object/GameObject.hpp"
+#include "../render/Camera.hpp"
+#include "../render/Renderer.hpp"
+#include "../render/TextRenderer.hpp"
+#include "../resource/ResourceManager.hpp"
 #include "../scene/SceneManager.hpp"
 #include "../utils/Events.hpp"
+#include "Config.hpp"
+#include "GameState.hpp"
+#include "Time.hpp"
 
 #include <SDL3/SDL.h>
-#include <spdlog/spdlog.h>
 #include <entt/signal/dispatcher.hpp>
+#include <spdlog/spdlog.h>
 
 namespace engine::core {
 
@@ -48,7 +48,7 @@ void Game::run() {
     close();
 }
 
-void Game::registerSceneSetup(std::function<void(engine::core::Context&)> func) {
+void Game::registerSceneSetup(std::function<void(engine::core::Context &)> func) {
     m_sceneSetupFunc = std::move(func);
     spdlog::trace("GAME::registerSceneSetup::已注册场景设置函数。");
 }
@@ -70,7 +70,7 @@ bool Game::init() {
     if (!initTextRenderer()) return false;
     if (!initInputManager()) return false;
     if (!initGameState()) return false;
-    
+
     if (!initContext()) return false;
     if (!initSceneManager()) return false;
 
@@ -102,13 +102,13 @@ void Game::render() {
     m_renderer->present();
 }
 
-void Game::close()  {
+void Game::close() {
     spdlog::trace("GAME::关闭游戏...");
 
     m_dispatcher->sink<engine::utils::QuitEvent>().disconnect<&Game::onQuitEvent>(this);
     m_sceneManager->close();
     m_resourceManager.reset();
-    
+
     if (m_SDLRenderer) {
         SDL_DestroyRenderer(m_SDLRenderer);
         m_SDLRenderer = nullptr;
@@ -121,7 +121,6 @@ void Game::close()  {
     m_isRunning = false;
 }
 /// @}
-
 
 /// @name 游戏组件管理
 /// @{
@@ -136,10 +135,10 @@ bool Game::initDispatcher() {
     return true;
 }
 
-bool Game::initConfig(){
+bool Game::initConfig() {
     try {
         m_config = std::make_unique<engine::core::Config>("assets/config.json");
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         spdlog::error("GAME::initConfig::初始化配置失败: {}", e.what());
         return false;
     }
@@ -186,7 +185,7 @@ bool Game::initTime() {
     return true;
 }
 
-bool Game::initResourceManager(){
+bool Game::initResourceManager() {
     try {
         m_resourceManager = std::make_unique<resource::ResourceManager>(m_SDLRenderer);
     } catch (const std::exception &e) {
@@ -239,7 +238,7 @@ bool Game::initInputManager() {
 bool Game::initGameState() {
     try {
         m_gameState = std::make_unique<engine::core::GameState>(m_window, m_SDLRenderer);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         spdlog::error("GAME::initGameState::初始化游戏状态失败: {}", e.what());
         return false;
     }
@@ -251,12 +250,11 @@ bool Game::initContext() {
         m_context = std::make_unique<engine::core::Context>(
             *m_dispatcher,
             *m_inputManager,
-            *m_renderer, 
-            *m_camera, 
+            *m_renderer,
+            *m_camera,
             *m_textRenderer,
             *m_resourceManager,
-            *m_gameState
-        );
+            *m_gameState);
     } catch (const std::exception &e) {
         spdlog::error("GAME::initContext::上下文初始化失败: {}", e.what());
         return false;
@@ -274,7 +272,6 @@ bool Game::initSceneManager() {
     return true;
 }
 /// @}
-
 
 void Game::onQuitEvent() {
     spdlog::trace("GAME::onQuitEvent::收到退出事件");

@@ -1,11 +1,7 @@
-/**
- * @file Config.hpp
- * @brief 配置管理类
- */
 #pragma once
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include <nlohmann/json_fwd.hpp>
 
@@ -14,15 +10,14 @@ namespace engine::core {
 /**
  * @class Config
  * @brief 配置管理类，负责加载、保存和管理应用程序的配置。
- * 
+ *
  * 该类提供了应用程序的默认配置值，包括窗口设置、图形设置、性能设置、
  * 音频设置和键盘绑定等。可以从JSON文件加载配置，也可以将当前配置保存到JSON文件。
- * 
+ *
  * 配置类是不可拷贝和不可移动的，以确保配置对象的全局唯一性。
  */
 class Config final {
-public:
-#pragma region 默认配置值
+  public:
     std::string m_windowTitle = "SunnyLand";
     int m_windowWidth = 1280;
     int m_windowHeight = 720;
@@ -30,12 +25,12 @@ public:
 
     bool m_vsyncEnabled = true;
     int m_targetFPS = 60;
-    
+
     float m_musicVolume = 1.0f;
     float m_soundVolume = 1.0f;
     /**
      * @brief 键盘绑定映射
-     * 
+     *
      * 存储操作名称到SDL Scancode名称列表的映射，允许一个操作绑定多个按键。
      * 默认包含基本的移动、跳跃、攻击和暂停游戏的按键绑定。
      */
@@ -46,9 +41,7 @@ public:
         {"move_down", {"S", "Down"}},
         {"jump", {"J", "Space"}},
         {"attack", {"K", "MouseLeft"}},
-        {"pause", {"P", "Escape"}}
-    };
-#pragma endregion
+        {"pause", {"P", "Escape"}}};
 
     /**
      * @brief 构造函数，从指定文件加载配置
@@ -61,34 +54,11 @@ public:
     Config(Config &&) = delete;
     Config &operator=(Config &&) = delete;
 
-    /**
-     * @brief 从文件加载配置
-     * @param filePath 配置文件的路径
-     * @return 加载成功返回true，失败返回false
-     */
     bool loadFromFile(std::string_view filePath);
-    
-    /**
-     * @brief 将当前配置保存到文件
-     * @param filePath 要保存的配置文件路径
-     * @return 保存成功返回true，失败返回false
-     */
     [[nodiscard]] bool saveToFile(std::string_view filePath);
 
-private:
-    /**
-     * @brief 从JSON对象加载配置
-     * 
-     * 这是一个私有方法，由loadFromFile()调用，用于将nlohmann::json对象转换为配置类的成员变量
-     * @param j 包含配置数据的JSON对象
-     */
+  private:
     void fromJson(const nlohmann::json &j);
-    /**
-     * @brief 将当前配置转换为JSON对象
-     * 
-     * 这是一个私有方法，由saveToFile()调用，用于将配置类的成员变量转换为nlohmann::json对象
-     * @return 包含当前配置数据的有序JSON对象
-     */
     nlohmann::ordered_json toJson() const;
 };
 
